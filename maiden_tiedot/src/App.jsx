@@ -1,7 +1,8 @@
 const App = () => {
   return (
     <div>
-      Moi
+      find countries
+      <input type="text" />
     </div>
   )
 }
