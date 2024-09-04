@@ -1,29 +1,19 @@
 {
   "persons": [
     {
-      "name": "Ada Lovelace",
-      "number": "04-12-345",
-      "id": "2"
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": "3"
-    },
-    {
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
     },
     {
-      "id": "37c1",
-      "name": "Keila Kalle",
-      "number": "045-222-3450"
-    },
-    {
       "id": "7d47",
       "name": "Arto Hellas",
       "number": "040-123-2345"
+    },
+    {
+      "id": "9a58",
+      "name": "Ada Lovelace",
+      "number": "12-456-789"
     }
   ]
 }
