@@ -28,20 +28,21 @@ const CountryInformation = ({ name }) => {
   )
 }
 
-const Country = ({ name }) => {
+const Country = ({ name, onShow }) => {
   return (
-    <>
-      <p>{name}</p>
-    </>
+    <div>
+      <p className='countryName'>{name}</p>
+      <button onClick={onShow}>Show</button>
+    </div>
   )
 }
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, onShowCountry }) => {
   if (countries.length <= 10 && countries.length !== 1) {
     return (
       <>
         {countries.map((country, index) => (
-          <Country key={index} name={country} />
+          <Country key={index} name={country} onShow={() => onShowCountry(country)} />
         ))}
       </>
     )
@@ -64,6 +65,7 @@ const App = () => {
   const [filter, setFilter] = useState('')
   const [filteredCountries, setFilteredCountries] = useState([])
   const [allCountries, setAllCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     axios
@@ -82,6 +84,11 @@ const App = () => {
     const newFilter = event.target.value.toLowerCase()
     setFilter(newFilter)
     filterCountries(newFilter)
+    setSelectedCountry(null)
+  }
+
+  const handleShowCountry = (country) => {
+    setSelectedCountry(country)
   }
 
   return (
@@ -89,7 +96,12 @@ const App = () => {
       Find countries
       <input type="text" onChange={handleChange} />
 
-      <Countries countries={filteredCountries} />
+      {selectedCountry ? (
+        <CountryInformation name={selectedCountry} />
+      ) : (
+        <Countries countries={filteredCountries} onShowCountry={handleShowCountry} />
+      )}
+
     </div>
   )
 }
