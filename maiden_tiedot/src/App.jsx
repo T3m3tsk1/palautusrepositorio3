@@ -3,6 +3,9 @@ import axios from 'axios'
 
 const CountryInformation = ({ name }) => {
   const [info, setInfo] = useState({})
+  const [coordinateInfo, setCoordinateInfo] = useState({})
+  const [weatherInfo, setWeatherInfo] = useState({})
+  const api_key = import.meta.env.VITE_SOME_KEY
 
   useEffect(() => {
     axios
@@ -12,18 +15,51 @@ const CountryInformation = ({ name }) => {
     })
   }, [name])
 
+  useEffect(() => {
+    if (info.altSpellings && info.capital) {
+      axios
+      .get(`http://api.openweathermap.org/geo/1.0/direct?q=${info.capital}&limit=1&appid=${api_key}`)
+      .then(response => {
+        setCoordinateInfo(response.data[0])
+      })
+    }
+  }, [info])
+
+  useEffect(() => {
+    if (coordinateInfo.lat && coordinateInfo.lon) {
+      axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${coordinateInfo.lat}&lon=${coordinateInfo.lon}&appid=${api_key}`)
+      .then(response => {
+        setWeatherInfo(response.data)
+      })
+    }
+  }, [coordinateInfo])
+
   return (
     <>
-      <h2>{name}</h2>
+      <h1>{name}</h1>
       <p>Capital: {info.capital}</p>
       <p>Area: {info.area}</p>
-      <h3>Languages:</h3>
+      <h2>Languages:</h2>
       <ul>
         {info.languages && Object.values(info.languages).map((language, index) => (
           <li key={index}>{language}</li>
         ))}
       </ul>
       <img src={info.flags && info.flags.png} alt={info.flags && info.flags.alt} />
+
+      <h2>Weather in {info.capital}</h2>
+      {weatherInfo.main ? (
+        <>
+          <p>Temperature {(weatherInfo.main.temp - 273.15).toFixed(2)} °C</p>
+          <img src={`http://openweathermap.org/img/wn/${weatherInfo.weather[0].icon}.png`}/>
+          <p>Wind {(weatherInfo.wind.speed)} m/s</p>
+        </>
+      ) : (
+        <>
+          <p>Loading weather data...</p>
+        </>
+      )}
     </>
   )
 }
@@ -38,7 +74,13 @@ const Country = ({ name, onShow }) => {
 }
 
 const Countries = ({ countries, onShowCountry }) => {
-  if (countries.length <= 10 && countries.length !== 1) {
+  if (countries.length === 0) {
+    return (
+      <>
+        <p>No matches, try another filter.</p>
+      </>
+    )
+  } else if (countries.length <= 10 && countries.length !== 1) {
     return (
       <>
         {countries.map((country, index) => (
